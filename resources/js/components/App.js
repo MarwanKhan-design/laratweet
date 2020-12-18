@@ -101,7 +101,6 @@ export class App extends Component {
                         </div>
                     </div>
                 </div>
-                fgd
             </div>
         );
     }
