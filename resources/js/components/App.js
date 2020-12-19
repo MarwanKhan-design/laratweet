@@ -16,18 +16,26 @@ export class App extends Component {
     }
 
     getPosts() {
-        this.setState({ loading: true });
+        // this.setState({ loading: true });
         axios.get("/posts").then(response =>
             this.setState({
-                posts: [...response.data.posts],
-                loading: false
+                posts: [...response.data.posts]
+                // loading: true
             })
         );
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.getPosts();
         // console.log("Working");
+    }
+    componentDidMount() {
+        this.interval = setInterval(() => {
+            this.getPosts();
+        }, 1000);
+    }
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     handleChange(e) {

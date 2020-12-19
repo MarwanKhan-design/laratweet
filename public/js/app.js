@@ -65926,20 +65926,32 @@ var App = /*#__PURE__*/function (_Component) {
     value: function getPosts() {
       var _this2 = this;
 
-      this.setState({
-        loading: true
-      });
+      // this.setState({ loading: true });
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.get("/posts").then(function (response) {
         return _this2.setState({
-          posts: _toConsumableArray(response.data.posts),
-          loading: false
+          posts: _toConsumableArray(response.data.posts) // loading: true
+
         });
       });
     }
   }, {
+    key: "componentWillMount",
+    value: function componentWillMount() {
+      this.getPosts(); // console.log("Working");
+    }
+  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      this.getPosts(); // console.log("Working");
+      var _this3 = this;
+
+      this.interval = setInterval(function () {
+        _this3.getPosts();
+      }, 1000);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      clearInterval(this.interval);
     }
   }, {
     key: "handleChange",
@@ -65951,15 +65963,15 @@ var App = /*#__PURE__*/function (_Component) {
   }, {
     key: "handleSubmit",
     value: function handleSubmit(e) {
-      var _this3 = this;
+      var _this4 = this;
 
       e.preventDefault(); // this.postData();
 
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/posts", {
         body: this.state.body
       }).then(function (res) {
-        _this3.setState({
-          posts: [res.data].concat(_toConsumableArray(_this3.state.posts)),
+        _this4.setState({
+          posts: [res.data].concat(_toConsumableArray(_this4.state.posts)),
           body: ""
         });
       });
