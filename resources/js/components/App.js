@@ -12,7 +12,22 @@ export class App extends Component {
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        // this.renderPosts = this.renderPosts.bind(this);
+        this.renderPosts = this.renderPosts.bind(this);
+    }
+
+    getPosts() {
+        this.setState({ loading: true });
+        axios.get("/posts").then(response =>
+            this.setState({
+                posts: [...response.data.posts],
+                loading: false
+            })
+        );
+    }
+
+    componentDidMount() {
+        this.getPosts();
+        // console.log("Working");
     }
 
     handleChange(e) {
@@ -29,18 +44,38 @@ export class App extends Component {
             })
             .then(res => {
                 this.setState({
-                    posts: [...this.state.posts, res.data]
+                    posts: [res.data, ...this.state.posts],
+                    body: ""
                 });
             });
         this.setState({
             body: ""
         });
     }
-    // postData() {
-    //     axios.post("/posts", {
-    //         body: this.state.body
-    //     });
-    // }
+    postData() {
+        axios.post("/posts", {
+            body: this.state.body
+        });
+    }
+    renderPosts() {
+        return this.state.posts.map(post => (
+            <div key={post.id} className="media">
+                <div className="media-left">
+                    <img src={post.user.avatar} className="media-object mr-2" />
+                </div>
+                <div className="media-body">
+                    <div className="user">
+                        <a href={`/users/${post.user.username}`}>
+                            <b>
+                                {post.user.username} - {post.humanCreatedAt}
+                            </b>
+                        </a>
+                    </div>
+                    <p>{post.body}</p>
+                </div>
+            </div>
+        ));
+    }
     render() {
         return (
             <div className="container">
@@ -77,26 +112,9 @@ export class App extends Component {
                             <div className="card-header">Recent Tweets</div>
 
                             <div className="card-body">
-                                {this.state.posts.map(post => (
-                                    <div key={post.id} className="media">
-                                        <div className="media-left">
-                                            <img
-                                                src={post.user.avatar}
-                                                className="media-object mr-2"
-                                            />
-                                        </div>
-                                        <div className="media-body">
-                                            <div className="user">
-                                                <a
-                                                    href={`/users/${post.user.username}`}
-                                                >
-                                                    <b>{post.user.username}</b>
-                                                </a>
-                                            </div>
-                                            <p>{post.body}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                                {!this.state.loading
+                                    ? this.renderPosts()
+                                    : "Loading"}
                             </div>
                         </div>
                     </div>
